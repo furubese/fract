@@ -58,9 +58,9 @@ if __name__ == "__main__":
     rx = []
     ry = []
     w = 3
-    kakudo = 60
+    kakudo = 90
     kakudo2 = math.pi * 216 / 180
-    for i in range(1):
+    for i in range(5):
         tmp_x = (kaku(xz, yz, w, kakudo2 * i, kakudo)[0])
         tmp_y = (kaku(xz, yz, w, kakudo2 * i, kakudo)[1])
         for g in range(len(tmp_x)):
