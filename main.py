@@ -1,16 +1,25 @@
 import matplotlib.pyplot as plt
 import math
 
+
+def prinz(strings, debug):
+    if debug:
+        print(strings)
+    else:
+        pass
+
+
 class Draw:
-    def __init__(self, p):
+    def __init__(self, p, debug=False):
         self.p = p
         self.sp = p
         self.rp = []
+        self.debug = debug
 
     def bunkatu(self, kakudo):
         p = []
-        print("==self.p==")
-        print(self.p)
+        prinz("==self.p==", self.debug)
+        prinz(self.p, self.debug)
         x, y = 0, 1
         sa = self.p[0][x], self.p[0][y]
         ln = (self.p[1][x] - self.p[0][x]) / 2
@@ -23,8 +32,8 @@ class Draw:
         p.append([N2 + sa[x], sa[y]])
         p.append([self.p[1][x], self.p[1][y]])
         self.rp = p
-        print("==bunkatu==")
-        print("rp = {}".format(self.rp))
+        prinz("==bunkatu==", self.debug)
+        prinz("rp = {}".format(self.rp), self.debug)
 
     def cyck(self, kakudo, plist):
         p = []
@@ -32,8 +41,8 @@ class Draw:
         for i in range(len(plist)):
             p.append([plist[i][x] * math.cos(kakudo) - plist[i][y] * math.sin(kakudo),
                       plist[i][x] * math.sin(kakudo) + plist[i][y] * math.cos(kakudo)])
-        print("==cyck==")
-        print(p)
+        prinz("==cyck==", self.debug)
+        prinz(p, self.debug)
         return p
 
     def de_cyck(self, kakudo, plist):
@@ -42,8 +51,8 @@ class Draw:
         for i in range(len(plist)):
             p.append([plist[i][x] * math.cos(kakudo) + plist[i][y] * math.sin(kakudo),
                       - plist[i][x] * math.sin(kakudo) + plist[i][y] * math.cos(kakudo)])
-        print("==de_cyck==")
-        print(p)
+        prinz("==de_cyck==", self.debug)
+        prinz(p, self.debug)
         return p
 
     def sai(self, kakudo):
@@ -51,17 +60,31 @@ class Draw:
         i = 0
         while i + 1 < len(self.rp):
             kaku = math.atan((self.rp[i + 1][1] - self.rp[i][1]) / (self.rp[i + 1][0] - self.rp[i][0]))
-            print("kaku = {}".format(kaku))
+            prinz("kaku = {}".format(kaku), self.debug)
             p = [self.rp[i], self.rp[i + 1]]
             rps = Draw(p)
             rps.p = rps.de_cyck(kaku, rps.p)
             rps.bunkatu(kakudo)
             rps.rp = rps.cyck(kaku, rps.rp)
             sp.extend(rps.rp[0:-1])
-            print("sp = {}".format(sp))
+            prinz("sp = {}".format(sp), self.debug)
             i += 1
         sp.append(self.rp[-1])
         self.rp = sp
+
+    def cop(self, kakudo, w):
+        x, y = 0, 1
+        p = []
+        for i in range(len(self.rp)):
+            p.append([self.rp[i][x], self.rp[i][y]])
+        for g in range(w):
+            cyd = Draw(0).cyck((math.pi / 1 * 3 + kakudo) * (g + 1), p)
+            sp = []
+            for i in range(len(cyd)):
+                sp.append([cyd[i][x] + self.rp[-1][x], cyd[i][y] + self.rp[-1][y]])
+            prinz("===cop===", self.debug)
+            prinz(sp, self.debug)
+            self.rp.extend(sp)
 
     def draw(self):
         x = []
@@ -70,15 +93,19 @@ class Draw:
             x.append(i[0])
             y.append(i[1])
         for i in range(len(x)):
-            print("{:<20.9f}, {:<20.9f}".format(x[i], y[i]))
-        print("x = {}\ny = {}".format(x, y))
+            prinz("{:<20.9f}, {:<20.9f}".format(x[i], y[i]), self.debug)
+        prinz("x = {}\ny = {}".format(x, y), self.debug)
         plt.plot(x, y)
         plt.show()
 
 
 if __name__ == "__main__":
     point = [0.0, 0.0], [1.0, 0.0]
-    dl = Draw(point)
-    dl.bunkatu(math.pi / 6)
-    dl.sai(math.pi / 6)
+    kakus = math.pi * 1 / 180
+    dl = Draw(point, True)
+    dl.rp = point
+    for i in range(1):
+        dl.sai(kakus * 36)
+        print("{}.".format(i))
+    dl.cop(kakus * 36, 4)
     dl.draw()
