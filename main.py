@@ -50,7 +50,6 @@ class Draw:
         sp = []
         i = 0
         while i + 1 < len(self.rp):
-            sp.append(self.rp[i])
             kaku = math.atan((self.rp[i + 1][1] - self.rp[i][1]) / (self.rp[i + 1][0] - self.rp[i][0]))
             print("kaku = {}".format(kaku))
             p = [self.rp[i], self.rp[i + 1]]
@@ -58,15 +57,11 @@ class Draw:
             rps.p = rps.de_cyck(kaku, rps.p)
             rps.bunkatu(kakudo)
             rps.rp = rps.cyck(kaku, rps.rp)
-            sp.extend(rps.rp)
-            sp.append(self.rp[i + 1])
+            sp.extend(rps.rp[0:-1])
             print("sp = {}".format(sp))
             i += 1
-        print("==sp==")
-        print(sp)
+        sp.append(self.rp[-1])
         self.rp = sp
-        print("==sai==")
-        print("rp = {}".format(self.rp))
 
     def draw(self):
         x = []
@@ -74,13 +69,15 @@ class Draw:
         for i in self.rp:
             x.append(i[0])
             y.append(i[1])
+        for i in range(len(x)):
+            print("{:<20.9f}, {:<20.9f}".format(x[i], y[i]))
         print("x = {}\ny = {}".format(x, y))
         plt.plot(x, y)
         plt.show()
 
 
 if __name__ == "__main__":
-    point = [0.0, 1.0], [1.0, 1.0]
+    point = [0.0, 0.0], [1.0, 0.0]
     dl = Draw(point)
     dl.bunkatu(math.pi / 6)
     dl.sai(math.pi / 6)
